@@ -11,6 +11,7 @@ jobs:
       with:
         submodules: 'recursive'
       name: Checkout
+    - uses: clonedSemicolon/setup-strace@v13
     - name: Set Swap Space
       uses: pierotofy/set-swap-space@master
       with:
@@ -21,3 +22,8 @@ jobs:
         docker compose -f docker-compose.yml -f docker-compose.build.yml up -d
         sleep 20
         docker compose exec -T webapp /webodm/webodm.sh test
+    - name: Upload strace artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: strace-logs-${{ github.job }}-${{ matrix.flavor || 'lint' }}-${{ github.run_id }}-${{ github.run_attempt }}-${{ strategy.job-index || 0 }}
+        path: /home/runner/strace_logs/
